@@ -9,7 +9,8 @@ const userSchema = `
         user(_id: ID!): User
     }
     type Mutation {
-        createUser(email: String!, password: String!): User
+        createUser(email: String!, password: String!): User,
+        deleteUser(_id: ID!): User
     }
 `;
 

@@ -3,12 +3,12 @@ import UserModel from "../models/userModel";
 import { IUsers, IUser, IUserId } from "../interfaces/userInterface";
 import { Types } from "mongoose";
 
-const getUsers = async () => {
+const getUsers = async (): Promise<IUsers> => {
     const users: any = await UserModel.find();
     return disablePasswords(users);
 };
 
-const getUser = async (args: IUser) => {
+const getUser = async (args: IUser): Promise<IUser> => {
     const userId: IUserId = {
         _id: args._id
     };
@@ -16,7 +16,7 @@ const getUser = async (args: IUser) => {
     return disablePassword(user);
 };
 
-const createUser = async (args: IUser) => {
+const createUser = async (args: IUser): Promise<IUser | Error> => {
     const userExists = await UserModel.findOne({ email: args.email });
     const passwordExists = args.password;
 
@@ -33,18 +33,32 @@ const createUser = async (args: IUser) => {
         email: args.email,
         password: await bcrypt.hash(args.password, 10)
     });
+
     const savedUser = await user.save();
+
     return disablePassword(savedUser);
 };
 
-const disablePasswords = (users: IUsers) =>
+const deleteUser = async (_id: IUserId): Promise<IUserId | Error> => {
+    const userExists = await UserModel.findOne({ _id });
+
+    if (!userExists) {
+        return new Error("User doesn't exist");
+    }
+
+    await UserModel.deleteOne({ _id });
+
+    return _id;
+};
+
+const disablePasswords = (users: IUsers): IUsers =>
     users.map((user: IUser) => ({
         _id: user._id,
         email: user.email,
         password: ""
     }));
 
-const disablePassword = (user: IUser) => ({
+const disablePassword = (user: IUser): IUser => ({
     _id: user._id,
     email: user.email,
     password: ""
@@ -53,7 +67,8 @@ const disablePassword = (user: IUser) => ({
 const usersResolvers = {
     user: getUser,
     users: getUsers,
-    createUser: createUser
+    createUser: createUser,
+    deleteUser: deleteUser
 };
 
 export default usersResolvers;
