@@ -5,7 +5,7 @@ const userSchema = `
         password: String!
     }
     type Query {
-        users: [User!],
+        users: [User!]!,
         user(_id: ID!): User
     }
     type Mutation {
