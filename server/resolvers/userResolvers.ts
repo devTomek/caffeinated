@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import UserModel from "../models/userModel";
-import { IUsers, IUser, IUserId } from "../interfaces/userInterface";
-import { Types } from "mongoose";
+import { IUsers, IUser } from "../interfaces/userInterface";
+import { Types, Document } from "mongoose";
 
 const getUsers = async (): Promise<IUsers> => {
     const users: any = await UserModel.find();
@@ -9,7 +9,7 @@ const getUsers = async (): Promise<IUsers> => {
 };
 
 const getUser = async (args: IUser): Promise<IUser> => {
-    const userId: IUserId = {
+    const userId: { _id: string } = {
         _id: args._id
     };
     const user: any = await UserModel.findOne(userId);
@@ -34,12 +34,14 @@ const createUser = async (args: IUser): Promise<IUser | Error> => {
         password: await bcrypt.hash(args.password, 10)
     });
 
-    const savedUser = await user.save();
+    const savedUser: IUser = await user.save();
 
     return disablePassword(savedUser);
 };
 
-const deleteUser = async (_id: IUserId): Promise<IUserId | Error> => {
+const deleteUser = async (
+    _id: Types.ObjectId
+): Promise<Types.ObjectId | Error> => {
     const userExists = await UserModel.findOne({ _id });
 
     if (!userExists) {
@@ -51,14 +53,39 @@ const deleteUser = async (_id: IUserId): Promise<IUserId | Error> => {
     return _id;
 };
 
-const disablePasswords = (users: IUsers): IUsers =>
+const editUser = async (args: IUser): Promise<IUser | Error> => {
+    const filter: { _id: string } = { _id: args._id };
+    const email: string = args.email ? args.email : "";
+    const password: string = args.password ? args.password : "";
+    const encryptedPassword: string = await bcrypt.hash(password, 10);
+    const update: { email: string; password: string } = {
+        email,
+        password: encryptedPassword
+    };
+
+    if (!email && !password) {
+        throw new Error("No data provided");
+    }
+
+    await UserModel.findOneAndUpdate(filter, update);
+
+    const user: Document | null = await UserModel.findOne(filter);
+
+    if (!user) {
+        throw new Error("No user found");
+    }
+
+    return disablePassword(user);
+};
+
+const disablePasswords = (users: any): IUsers =>
     users.map((user: IUser) => ({
         _id: user._id,
         email: user.email,
         password: ""
     }));
 
-const disablePassword = (user: IUser): IUser => ({
+const disablePassword = (user: any): IUser => ({
     _id: user._id,
     email: user.email,
     password: ""
@@ -68,7 +95,8 @@ const usersResolvers = {
     user: getUser,
     users: getUsers,
     createUser: createUser,
-    deleteUser: deleteUser
+    deleteUser: deleteUser,
+    editUser: editUser
 };
 
 export default usersResolvers;

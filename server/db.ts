@@ -12,7 +12,7 @@ const connect = async () => {
 
     return await mongoose.connect(
         `mongodb://${DB_LOGIN}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=${DB_AUTH_SOURCE}`,
-        { useNewUrlParser: true }
+        { useNewUrlParser: true, useFindAndModify: false }
     );
 };
 
