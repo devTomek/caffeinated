@@ -1,7 +1,7 @@
-import usersResolvers from "./userResolvers";
+import userResolvers from "./userResolvers";
 
 const rootResolver = {
-    ...usersResolvers
+    ...userResolvers
 };
 
 export default rootResolver;

@@ -91,7 +91,7 @@ const disablePassword = (user: any): IUser => ({
     password: ""
 });
 
-const usersResolvers = {
+const userResolvers = {
     user: getUser,
     users: getUsers,
     createUser: createUser,
@@ -99,4 +99,4 @@ const usersResolvers = {
     editUser: editUser
 };
 
-export default usersResolvers;
+export default userResolvers;
