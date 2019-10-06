@@ -20,3 +20,9 @@ export interface IAuthUser {
     token: string;
     expirationDate: number;
 }
+
+export interface Req {
+    isAuth: boolean;
+    userId: string;
+    userEmail: string;
+}

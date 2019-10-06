@@ -4,10 +4,13 @@ import graphqlHTTP from "express-graphql";
 import rootSchema from "./schemas/rootSchema";
 import rootResolver from "./resolvers/rootResolver";
 import dotenv from "dotenv";
+import authMiddleware from "./middleware/authMiddleware";
 
 dotenv.config();
 
 const app = express();
+
+app.use(authMiddleware);
 
 app.use(
     "/graphql",

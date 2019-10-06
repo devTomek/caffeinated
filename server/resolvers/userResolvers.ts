@@ -1,57 +1,30 @@
 import bcrypt from "bcrypt";
 import UserModel from "../models/userModel";
-import {
-    IUsers,
-    IUser,
-    IAuthUserArgs,
-    IAuthUser
-} from "../interfaces/userInterface";
+import { IUsers, IUser, Req } from "../interfaces/userInterface";
 import { Types, Document } from "mongoose";
-import jwt from "jsonwebtoken";
+import resolversUtils from "./resolversUtils";
+import authResolvers from "./authResolvers";
 
-const getUsers = async (): Promise<IUsers> => {
+const getUsers = async (args: any, req: Req): Promise<IUsers | Error> => {
+    authResolvers.throwErrorWhenUnauthorized(req);
+
     const users: any = await UserModel.find();
-    return disablePasswords(users);
+    return resolversUtils.disablePasswords(users);
 };
 
-const getUser = async (args: IUser): Promise<IUser> => {
+const getUser = async (args: IUser, req: Req): Promise<IUser | Error> => {
+    authResolvers.throwErrorWhenUnauthorized(req);
+
     const userId: { _id: string } = {
         _id: args._id
     };
     const user: any = await UserModel.findOne(userId);
-    return disablePassword(user);
+    return resolversUtils.disablePassword(user);
 };
 
-const login = async (args: IAuthUserArgs): Promise<Error | IAuthUser> => {
-    const user: any = await UserModel.findOne({ email: args.email });
-    if (!user) {
-        throw new Error("User not found");
-    }
+const createUser = async (args: IUser, req: Req): Promise<IUser | Error> => {
+    authResolvers.throwErrorWhenUnauthorized(req);
 
-    const isPasswordEqual = await bcrypt.compare(args.password, user.password);
-    if (!isPasswordEqual) {
-        throw new Error("Incorrect password");
-    }
-
-    const signData = {
-        _id: user._id,
-        email: user.email
-    };
-    const expiresIn = 1;
-    const options = {
-        expiresIn: `${expiresIn}h`
-    };
-    const secret: string | any = process.env.JWT_SECRET;
-    const token: string = jwt.sign(signData, secret, options);
-
-    return {
-        _id: user._id,
-        token: token,
-        expirationDate: expiresIn
-    };
-};
-
-const createUser = async (args: IUser): Promise<IUser | Error> => {
     const userExists = await UserModel.findOne({ email: args.email });
     const passwordExists = args.password;
 
@@ -71,12 +44,15 @@ const createUser = async (args: IUser): Promise<IUser | Error> => {
 
     const savedUser: IUser = await user.save();
 
-    return disablePassword(savedUser);
+    return resolversUtils.disablePassword(savedUser);
 };
 
 const deleteUser = async (
-    _id: Types.ObjectId
+    _id: Types.ObjectId,
+    req: Req
 ): Promise<Types.ObjectId | Error> => {
+    authResolvers.throwErrorWhenUnauthorized(req);
+
     const userExists = await UserModel.findOne({ _id });
 
     if (!userExists) {
@@ -88,7 +64,9 @@ const deleteUser = async (
     return _id;
 };
 
-const editUser = async (args: IUser): Promise<IUser | Error> => {
+const editUser = async (args: IUser, req: Req): Promise<IUser | Error> => {
+    authResolvers.throwErrorWhenUnauthorized(req);
+
     const filter: { _id: string } = { _id: args._id };
     const email: string = args.email ? args.email : "";
     const password: string = args.password ? args.password : "";
@@ -110,26 +88,12 @@ const editUser = async (args: IUser): Promise<IUser | Error> => {
         throw new Error("No user found");
     }
 
-    return disablePassword(user);
+    return resolversUtils.disablePassword(user);
 };
-
-const disablePasswords = (users: any): IUsers =>
-    users.map((user: IUser) => ({
-        _id: user._id,
-        email: user.email,
-        password: ""
-    }));
-
-const disablePassword = (user: any): IUser => ({
-    _id: user._id,
-    email: user.email,
-    password: ""
-});
 
 const userResolvers = {
     user: getUser,
     users: getUsers,
-    login: login,
     createUser: createUser,
     deleteUser: deleteUser,
     editUser: editUser
