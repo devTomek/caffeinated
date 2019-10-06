@@ -1,7 +1,13 @@
 import bcrypt from "bcrypt";
 import UserModel from "../models/userModel";
-import { IUsers, IUser } from "../interfaces/userInterface";
+import {
+    IUsers,
+    IUser,
+    IAuthUserArgs,
+    IAuthUser
+} from "../interfaces/userInterface";
 import { Types, Document } from "mongoose";
+import jwt from "jsonwebtoken";
 
 const getUsers = async (): Promise<IUsers> => {
     const users: any = await UserModel.find();
@@ -14,6 +20,34 @@ const getUser = async (args: IUser): Promise<IUser> => {
     };
     const user: any = await UserModel.findOne(userId);
     return disablePassword(user);
+};
+
+const login = async (args: IAuthUserArgs): Promise<Error | IAuthUser> => {
+    const user: any = await UserModel.findOne({ email: args.email });
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    const isPasswordEqual = await bcrypt.compare(args.password, user.password);
+    if (!isPasswordEqual) {
+        throw new Error("Incorrect password");
+    }
+
+    const signData = {
+        _id: user._id,
+        email: user.email
+    };
+    const expiresIn = 1;
+    const options = {
+        expiresIn: `${expiresIn}h`
+    };
+    const token: string = jwt.sign(signData, process.env.JWT_SECRET, options);
+
+    return {
+        _id: user._id,
+        token: token,
+        expirationDate: expiresIn
+    };
 };
 
 const createUser = async (args: IUser): Promise<IUser | Error> => {
@@ -94,6 +128,7 @@ const disablePassword = (user: any): IUser => ({
 const userResolvers = {
     user: getUser,
     users: getUsers,
+    login: login,
     createUser: createUser,
     deleteUser: deleteUser,
     editUser: editUser
