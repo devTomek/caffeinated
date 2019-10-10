@@ -5,10 +5,18 @@ import rootSchema from "./schemas/rootSchema";
 import rootResolver from "./resolvers/rootResolver";
 import dotenv from "dotenv";
 import authMiddleware from "./middleware/authMiddleware";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+
+const corsOptions = {
+    origin: "http://localhost:3000",
+    optionsSuccessStatus: 200,
+    methods: ["GET,POST,OPTIONS"]
+};
+app.use(cors(corsOptions));
 
 app.use(authMiddleware);
 
