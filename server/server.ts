@@ -16,6 +16,13 @@ const corsOptions = {
     optionsSuccessStatus: 200,
     methods: ["GET,POST,OPTIONS"]
 };
+// todo use this or cors
+app.use((req, res, next) => {
+    res.setHeader("Access-Controll-Allow-Origin", "*");
+    res.setHeader("Access-Controll-Allow-Methods", "GET,POST,OPTIONS");
+    res.setHeader("Access-Controll-Allow-Headers", "Content-Type");
+    next();
+});
 app.use(cors(corsOptions));
 
 app.use(authMiddleware);
