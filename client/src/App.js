@@ -9,23 +9,31 @@ import {
 } from "react-router-dom";
 import LoginPage from "./LoginPage";
 import Dashboard from "./Dashboard";
+import ApolloClient from "apollo-boost";
+import utils from "./utils";
+import { ApolloProvider } from "@apollo/react-hooks";
 
-// todo configure graphQL
 const App = () => {
+    const client = new ApolloClient({
+        uri: utils.BASE_URL
+    });
+
     return (
-        <Provider store={store}>
-            <Router>
-                <Switch>
-                    <Redirect from="/" to="/auth" exact />
-                    <Route path="/auth">
-                        <LoginPage />
-                    </Route>
-                    <Route path="/dashboard">
-                        <Dashboard />
-                    </Route>
-                </Switch>
-            </Router>
-        </Provider>
+        <ApolloProvider client={client}>
+            <Provider store={store}>
+                <Router>
+                    <Switch>
+                        <Redirect from="/" to="/auth" exact />
+                        <Route path="/auth">
+                            <LoginPage />
+                        </Route>
+                        <Route path="/dashboard">
+                            <Dashboard />
+                        </Route>
+                    </Switch>
+                </Router>
+            </Provider>
+        </ApolloProvider>
     );
 };
 

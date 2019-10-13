@@ -11,18 +11,10 @@ dotenv.config();
 
 const app = express();
 
+const FRONTEND_ORIGIN = "http://localhost:3000";
 const corsOptions = {
-    origin: "http://localhost:3000",
-    optionsSuccessStatus: 200,
-    methods: ["GET,POST,OPTIONS"]
+    origin: FRONTEND_ORIGIN
 };
-// todo use this or cors
-app.use((req, res, next) => {
-    res.setHeader("Access-Controll-Allow-Origin", "*");
-    res.setHeader("Access-Controll-Allow-Methods", "GET,POST,OPTIONS");
-    res.setHeader("Access-Controll-Allow-Headers", "Content-Type");
-    next();
-});
 app.use(cors(corsOptions));
 
 app.use(authMiddleware);
@@ -31,8 +23,7 @@ app.use(
     "/graphql",
     graphqlHTTP({
         schema: rootSchema,
-        rootValue: rootResolver,
-        graphiql: process.env.NODE_ENV === "development"
+        rootValue: rootResolver
     })
 );
 

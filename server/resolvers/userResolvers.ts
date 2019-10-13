@@ -6,8 +6,7 @@ import resolversUtils from "./resolversUtils";
 import authResolvers from "./authResolvers";
 
 const getUsers = async (args: any, req: Req): Promise<IUsers | Error> => {
-    // todo uncomment this
-    // authResolvers.throwErrorWhenUnauthorized(req);
+    authResolvers.throwErrorWhenUnauthorized(req);
 
     const users: any = await UserModel.find();
     return resolversUtils.disablePasswords(users);
