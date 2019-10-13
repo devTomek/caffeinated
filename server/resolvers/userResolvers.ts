@@ -23,8 +23,6 @@ const getUser = async (args: IUser, req: Req): Promise<IUser | Error> => {
 };
 
 const createUser = async (args: IUser, req: Req): Promise<IUser | Error> => {
-    authResolvers.throwErrorWhenUnauthorized(req);
-
     const userExists = await UserModel.findOne({ email: args.email });
     const passwordExists = args.password;
 
