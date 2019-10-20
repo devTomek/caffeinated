@@ -4,8 +4,14 @@ import { buttonWrapper, loginPage } from "./LoginPage.module.css";
 import { makeStyles } from "@material-ui/core/styles";
 import EmailPasswordForm from "../emailPasswordForm/EmailPasswordForm";
 import utils from "../../utils";
+import loginActions from "../../actions/loginActions";
+import { connect } from "react-redux";
 
-const LoginPage = () => {
+const mapDispatchToProps = dispatch => ({
+    login: token => dispatch(loginActions.login(token))
+});
+
+const LoginPage = props => {
     const [emailValue, setEmailValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
 
@@ -45,8 +51,8 @@ const LoginPage = () => {
             });
             const json = await response.json();
             const token = json.data.login.token;
-
-            return token;
+            // todo: save token in localStorage or cookie
+            props.login(token);
         } catch (e) {
             console.error(e);
         }
@@ -113,4 +119,7 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default connect(
+    null,
+    mapDispatchToProps
+)(LoginPage);
