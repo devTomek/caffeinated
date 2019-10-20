@@ -1,5 +1,5 @@
 import React from "react";
-import store from "./store";
+import store from "../../store";
 import { Provider } from "react-redux";
 import {
     BrowserRouter as Router,
@@ -7,10 +7,10 @@ import {
     Redirect,
     Route
 } from "react-router-dom";
-import LoginPage from "./LoginPage";
-import Dashboard from "./Dashboard";
+import LoginPage from "../loginPage/LoginPage";
+import Dashboard from "../dashboard/Dashboard";
 import ApolloClient from "apollo-boost";
-import utils from "./utils";
+import utils from "../../utils";
 import { ApolloProvider } from "@apollo/react-hooks";
 
 const App = () => {
