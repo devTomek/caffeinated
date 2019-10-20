@@ -1,10 +1,14 @@
-import React from "react";
-import EmailPasswordForm from "../emailPasswordForm/EmailPasswordForm";
+import React, { useState } from "react";
 import SubmitButton from "../submitButton/SubmitButton";
 import { buttonWrapper, loginPage } from "./LoginPage.module.css";
 import { makeStyles } from "@material-ui/core/styles";
+import EmailPasswordForm from "../emailPasswordForm/EmailPasswordForm";
+import utils from "../../utils";
 
 const LoginPage = () => {
+    const [emailValue, setEmailValue] = useState("");
+    const [passwordValue, setPasswordValue] = useState("");
+
     const useStyles = makeStyles(theme => ({
         container: {
             display: "flex",
@@ -15,16 +19,94 @@ const LoginPage = () => {
             width: "350px"
         }
     }));
+
     const classes = useStyles();
+
+    const login = async e => {
+        e.preventDefault();
+
+        try {
+            const requestBody = {
+                query: `
+                    query {
+                        login(email: "${emailValue}", password: "${passwordValue}") {
+                            _id
+                            token
+                        }
+                    }
+                `
+            };
+            const response = await fetch(utils.BASE_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+            const json = await response.json();
+            const token = json.data.login.token;
+
+            return token;
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const register = async () => {
+        try {
+            const requestBody = {
+                query: `
+                    mutation {
+                        createUser(email: "${emailValue}", password: "${passwordValue}") {
+                            _id
+                            email
+                        }
+                    }
+                `
+            };
+            await fetch(utils.BASE_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const onChange = e => {
+        const value = e.target.value;
+        const name = e.target.name;
+
+        switch (name) {
+            case "email": {
+                setEmailValue(value);
+                break;
+            }
+            case "password": {
+                setPasswordValue(value);
+                break;
+            }
+            default:
+                break;
+        }
+    };
+
     return (
-        <div className={loginPage}>
+        <div className={loginPage} onSubmit={login}>
             <form className={classes.container} noValidate autoComplete="off">
-                <EmailPasswordForm />
+                <EmailPasswordForm
+                    onChange={onChange}
+                    emailValue={emailValue}
+                    passwordValue={passwordValue}
+                />
                 <div className={buttonWrapper}>
                     <br />
-                    <SubmitButton text="login" />
+                    <SubmitButton type="submit" text="login" />
                     <br />
-                    <SubmitButton text="register" />
+                    <SubmitButton onClick={register} text="register" />
                 </div>
             </form>
         </div>
