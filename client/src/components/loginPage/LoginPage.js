@@ -11,6 +11,7 @@ const mapDispatchToProps = dispatch => ({
     login: token => dispatch(loginActions.login(token))
 });
 
+// todo: refactor
 const LoginPage = props => {
     const [emailValue, setEmailValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
@@ -42,6 +43,7 @@ const LoginPage = props => {
                     }
                 `
             };
+
             const response = await fetch(utils.BASE_URL, {
                 method: "POST",
                 headers: {
@@ -49,9 +51,15 @@ const LoginPage = props => {
                 },
                 body: JSON.stringify(requestBody)
             });
+
             const json = await response.json();
+
             const token = json.data.login.token;
-            // todo: save token in localStorage or cookie
+
+            localStorage.setItem("jwt", token);
+
+            // todo: dont save token in redux
+            // todo: write something else, maybe delete it
             props.login(token);
         } catch (e) {
             console.error(e);
