@@ -8,10 +8,10 @@ import {
     Route
 } from "react-router-dom";
 import LoginPage from "../loginPage/LoginPage";
-import Dashboard from "../dashboard/Dashboard";
 import ApolloClient from "apollo-boost";
 import utils from "../../utils";
 import { ApolloProvider } from "@apollo/react-hooks";
+import DashboardContainer from "../dashboard/DashboardContainer";
 
 const App = () => {
     const client = new ApolloClient({
@@ -28,7 +28,7 @@ const App = () => {
                             <LoginPage />
                         </Route>
                         <Route path="/dashboard">
-                            <Dashboard />
+                            <DashboardContainer />
                         </Route>
                     </Switch>
                 </Router>

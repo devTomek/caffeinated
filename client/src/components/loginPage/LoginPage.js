@@ -6,15 +6,16 @@ import EmailPasswordForm from "../emailPasswordForm/EmailPasswordForm";
 import utils from "../../utils";
 import loginActions from "../../actions/loginActions";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 const mapDispatchToProps = dispatch => ({
     login: token => dispatch(loginActions.login(token))
 });
 
-// todo: refactor
 const LoginPage = props => {
     const [emailValue, setEmailValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
+    const history = useHistory();
 
     const useStyles = makeStyles(theme => ({
         container: {
@@ -43,7 +44,6 @@ const LoginPage = props => {
                     }
                 `
             };
-
             const response = await fetch(utils.BASE_URL, {
                 method: "POST",
                 headers: {
@@ -51,16 +51,15 @@ const LoginPage = props => {
                 },
                 body: JSON.stringify(requestBody)
             });
-
             const json = await response.json();
-
+            if (!json.data) {
+                return;
+            }
             const token = json.data.login.token;
 
-            localStorage.setItem("jwt", token);
-
-            // todo: dont save token in redux
-            // todo: write something else, maybe delete it
             props.login(token);
+            localStorage.setItem("jwt", token);
+            history.push("/dashboard");
         } catch (e) {
             console.error(e);
         }

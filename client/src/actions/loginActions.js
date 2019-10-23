@@ -1,19 +1,36 @@
 import loadingActions from "./loadingActions";
 
 const LOGIN = "LOGIN";
+const LOGOUT = "LOGOUT";
 
-const login = token => async dispatch => {
-    await dispatch({
+const login = token => dispatch => {
+    dispatch({
         type: loadingActions.LOADING,
         loading: true
     });
 
-    await dispatch({
+    dispatch({
         type: LOGIN,
         token
     });
 
-    await dispatch({
+    dispatch({
+        type: loadingActions.LOADING,
+        loading: false
+    });
+};
+
+const logout = () => dispatch => {
+    dispatch({
+        type: loadingActions.LOADING,
+        loading: true
+    });
+
+    dispatch({
+        type: LOGOUT
+    });
+
+    dispatch({
         type: loadingActions.LOADING,
         loading: false
     });
@@ -21,7 +38,9 @@ const login = token => async dispatch => {
 
 const loginActions = {
     login,
-    LOGIN
+    LOGIN,
+    logout,
+    LOGOUT
 };
 
 export default loginActions;
