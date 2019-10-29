@@ -10,7 +10,7 @@ const mapDispatchToProps = dispatch => ({
     logout: () => dispatch(loginActions.logout())
 });
 
-const DashboardContainer = ({ logout }) => {
+const DashboardContainer = ({ logout, client }) => {
     const history = useHistory();
 
     useEffect(() => {
@@ -22,6 +22,7 @@ const DashboardContainer = ({ logout }) => {
     const doLogout = () => {
         localStorage.removeItem("jwt");
         logout();
+        client.clearStore();
         history.push("/auth");
     };
 
@@ -34,14 +35,11 @@ const DashboardContainer = ({ logout }) => {
         }
     `;
 
-    // todo: attach Auth header, probably in Apollo config
     const { loading, error, data } = useQuery(getUsers);
 
-    if (loading) return "Loading...";
-    if (error) return `Error! ${error.message}`;
+    if (loading) return <h1>Loading...</h1>;
 
-    console.log(data);
-    const users = data.users;
+    const users = data ? data.users : [];
 
     return <Dashboard logout={doLogout} users={users} />;
 };

@@ -9,13 +9,19 @@ import {
 } from "react-router-dom";
 import LoginPage from "../loginPage/LoginPage";
 import ApolloClient from "apollo-boost";
-import utils from "../../utils";
 import { ApolloProvider } from "@apollo/react-hooks";
 import DashboardContainer from "../dashboard/DashboardContainer";
 
 const App = () => {
     const client = new ApolloClient({
-        uri: utils.BASE_URL
+        request: operation => {
+            const token = localStorage.getItem("jwt");
+            operation.setContext({
+                headers: {
+                    authorization: token ? `Bearer ${token}` : ""
+                }
+            });
+        }
     });
 
     return (
@@ -28,7 +34,7 @@ const App = () => {
                             <LoginPage />
                         </Route>
                         <Route path="/dashboard">
-                            <DashboardContainer />
+                            <DashboardContainer client={client} />
                         </Route>
                     </Switch>
                 </Router>
