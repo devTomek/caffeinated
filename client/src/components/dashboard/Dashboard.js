@@ -1,10 +1,12 @@
 import React from "react";
 import SubmitButton from "../submitButton/SubmitButton";
+import Card from "../card/Card";
+import CardContainer from "../card/CardContainer";
 
-const Dashboard = ({ logout }) => {
+const Dashboard = ({ logout, users }) => {
     return (
         <div>
-            <h1>Dashboard</h1>
+            <CardContainer users={users} />
             <br />
             <SubmitButton text="Logout" onClick={logout} />
         </div>
