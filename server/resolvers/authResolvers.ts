@@ -26,12 +26,12 @@ const login = async (args: IAuthUserArgs): Promise<Error | IAuthUser> => {
         _id: user._id,
         email: user.email
     };
-    const expiresIn: number = 1;
+    const expiresIn: number = 15;
     type Options = {
         expiresIn: string;
     };
     const options: Options = {
-        expiresIn: `${expiresIn}h`
+        expiresIn: `${expiresIn}m`
     };
     const secret: string | any = process.env.JWT_SECRET;
     const token: string = jwt.sign(signData, secret, options);
