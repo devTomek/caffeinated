@@ -35,7 +35,7 @@ const DashboardContainer = ({ logout, client }) => {
         }
     `;
 
-    const { loading, error, data } = useQuery(getUsers);
+    const { loading, data } = useQuery(getUsers);
 
     if (loading) return <h1>Loading...</h1>;
 

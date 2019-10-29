@@ -1,6 +1,5 @@
 import React from "react";
 import SubmitButton from "../submitButton/SubmitButton";
-import Card from "../card/Card";
 import CardContainer from "../card/CardContainer";
 
 const Dashboard = ({ logout, users }) => {
