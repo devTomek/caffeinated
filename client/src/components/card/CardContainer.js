@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "./Card";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import utils from "../../utils";
 
 const CardContainer = ({ users }) => {
-    const [deletedUserId, setDeletedUserId] = useState("");
-
     const DELETE_USER = gql`
         mutation DeleteUser($_id: String!) {
             deleteUser(_id: $_id) {
@@ -15,7 +12,7 @@ const CardContainer = ({ users }) => {
         }
     `;
 
-    const [deleteUser, { data }] = useMutation(DELETE_USER);
+    const [deleteUser] = useMutation(DELETE_USER);
 
     const removeUser = async userId => {
         await deleteUser({
