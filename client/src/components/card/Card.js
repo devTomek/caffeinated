@@ -11,11 +11,13 @@ import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 
-const Card = ({ user, removeUser, userId }) => {
+const Card = ({ user, removeUser, userId, changeUser }) => {
     const [dense] = React.useState(false);
     const [secondary] = React.useState(false);
 
     const deleteUser = () => removeUser(userId);
+
+    const edituser = () => changeUser(userId, "changed@email.com");
 
     return (
         <div>
@@ -43,7 +45,11 @@ const Card = ({ user, removeUser, userId }) => {
                                     >
                                         <DeleteIcon />
                                     </IconButton>
-                                    <IconButton edge="end" aria-label="delete">
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="delete"
+                                        onClick={edituser}
+                                    >
                                         <EditIcon />
                                     </IconButton>
                                 </ListItemSecondaryAction>

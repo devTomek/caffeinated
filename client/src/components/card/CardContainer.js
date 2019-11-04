@@ -12,12 +12,31 @@ const CardContainer = ({ users }) => {
         }
     `;
 
+    const EDIT_USER = gql`
+        mutation EditUser($_id: String!, $email: String) {
+            editUser(_id: $_id, email: $email) {
+                _id
+                email
+            }
+        }
+    `;
+
     const [deleteUser] = useMutation(DELETE_USER);
+    const [editUser] = useMutation(EDIT_USER);
 
     const removeUser = async userId => {
         await deleteUser({
             variables: {
                 _id: userId
+            }
+        });
+    };
+
+    const changeUser = async (userId, email) => {
+        await editUser({
+            variables: {
+                _id: userId,
+                email
             }
         });
     };
@@ -29,6 +48,7 @@ const CardContainer = ({ users }) => {
                     key={index}
                     user={user}
                     removeUser={removeUser}
+                    changeUser={changeUser}
                     userId={user._id}
                 />
             ))}
