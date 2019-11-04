@@ -19,10 +19,10 @@ const DashboardContainer = ({ logout, client }) => {
         }
     }, [history]);
 
-    const doLogout = () => {
+    const doLogout = async () => {
+        await logout();
+        await client.clearStore();
         localStorage.removeItem("jwt");
-        logout();
-        client.clearStore();
         history.push("/auth");
     };
 

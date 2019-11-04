@@ -1,7 +1,8 @@
 import loginActions from "../actions/loginActions";
 
 const initialState = {
-    token: ""
+    token: "",
+    _id: ""
 };
 
 const loginReducer = (state = initialState, action) => {
@@ -9,13 +10,15 @@ const loginReducer = (state = initialState, action) => {
         case loginActions.LOGIN: {
             return {
                 ...state,
-                token: action.token
+                token: action.token,
+                _id: action._id
             };
         }
         case loginActions.LOGOUT: {
             return {
                 ...state,
-                token: ""
+                token: "",
+                _id: ""
             };
         }
         default:
@@ -24,5 +27,7 @@ const loginReducer = (state = initialState, action) => {
 };
 
 export const selectToken = state => state.loginReducer.token;
+
+export const selectId = state => state.loginReducer._id;
 
 export default loginReducer;

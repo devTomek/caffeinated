@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 const mapDispatchToProps = dispatch => ({
-    login: token => dispatch(loginActions.login(token))
+    login: (token, _id) => dispatch(loginActions.login(token, _id))
 });
 
 const LoginPage = props => {
@@ -56,8 +56,9 @@ const LoginPage = props => {
                 return;
             }
             const token = json.data.login.token;
+            const _id = json.data.login._id;
 
-            props.login(token);
+            props.login(token, _id);
             localStorage.setItem("jwt", token);
             history.push("/dashboard");
         } catch (e) {

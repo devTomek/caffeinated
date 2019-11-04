@@ -1,5 +1,4 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -10,23 +9,19 @@ import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 import FolderIcon from "@material-ui/icons/Folder";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
-const useStyles = makeStyles(theme => ({
-    root: {
-        maxWidth: 300
-    }
-}));
-
-const Card = ({ user }) => {
-    const classes = useStyles();
+const Card = ({ user, removeUser, userId }) => {
     const [dense] = React.useState(false);
     const [secondary] = React.useState(false);
 
+    const deleteUser = () => removeUser(userId);
+
     return (
-        <div className={classes.root}>
+        <div>
             <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <div className={classes.demo}>
+                <Grid item xs={12} md={6} style={{ width: "40vw" }}>
+                    <div>
                         <List dense={dense}>
                             <ListItem>
                                 <ListItemAvatar>
@@ -41,8 +36,15 @@ const Card = ({ user }) => {
                                     }
                                 />
                                 <ListItemSecondaryAction>
-                                    <IconButton edge="end" aria-label="delete">
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="delete"
+                                        onClick={deleteUser}
+                                    >
                                         <DeleteIcon />
+                                    </IconButton>
+                                    <IconButton edge="end" aria-label="delete">
+                                        <EditIcon />
                                     </IconButton>
                                 </ListItemSecondaryAction>
                             </ListItem>

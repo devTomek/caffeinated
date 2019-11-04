@@ -4,6 +4,7 @@ import { IUsers, IUser, Req } from "../interfaces/userInterface";
 import { Types, Document } from "mongoose";
 import resolversUtils from "./resolversUtils";
 import authResolvers from "./authResolvers";
+import { argsToArgsConfig } from "graphql/type/definition";
 
 const getUsers = async (args: any, req: Req): Promise<IUsers | Error> => {
     authResolvers.throwErrorWhenUnauthorized(req);
@@ -45,21 +46,16 @@ const createUser = async (args: IUser, req: Req): Promise<IUser | Error> => {
     return resolversUtils.disablePassword(savedUser);
 };
 
-const deleteUser = async (
-    _id: Types.ObjectId,
-    req: Req
-): Promise<Types.ObjectId | Error> => {
+type Args = {
+    _id: string;
+};
+const deleteUser = async (args: Args, req: Req): Promise<void> => {
     authResolvers.throwErrorWhenUnauthorized(req);
 
-    const userExists = await UserModel.findOne({ _id });
-
-    if (!userExists) {
-        return new Error("User doesn't exist");
-    }
-
-    await UserModel.deleteOne({ _id });
-
-    return _id;
+    const id = {
+        _id: args._id
+    };
+    await UserModel.deleteOne(id);
 };
 
 const editUser = async (args: IUser, req: Req): Promise<IUser | Error> => {

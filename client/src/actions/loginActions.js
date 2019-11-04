@@ -3,7 +3,7 @@ import loadingActions from "./loadingActions";
 const LOGIN = "LOGIN";
 const LOGOUT = "LOGOUT";
 
-const login = token => dispatch => {
+const login = (token, _id) => dispatch => {
     dispatch({
         type: loadingActions.LOADING,
         loading: true
@@ -11,7 +11,8 @@ const login = token => dispatch => {
 
     dispatch({
         type: LOGIN,
-        token
+        token,
+        _id
     });
 
     dispatch({
